@@ -6,12 +6,15 @@ library(shiny)
 library(markdown)
 library(lubridate)
 library(shinyjs)
+library(sampledblib.r)
+
+
 
 function(input, output, session) {
 
     #SET PATH TO SQLITE DATABASE
+    # database <- "/home/mmurphy/Workspace/sampleDB-rpackage/files/sqlite_database/19-Oct-21.sample_db.sqlite"
     database <- Sys.getenv("SAMPLEDB_DATABASE")
-
     #SERVER-SIDE DROPDOWN -- SAVES LOADING TIME
     updateSelectizeInput(session, 'SearchBySubjectUID', choices = c("", sampleDB::CheckTable(database = database, "study_subject")$uid %>% unique()), server = TRUE)
 
@@ -331,10 +334,12 @@ function(input, output, session) {
     observeEvent(
       input$.AddFreezerAction,
       ({
-        sampleDB::AddToTable(database = database, "location",
-                             list(created = lubridate::now("UTC"),
-                                  last_updated = lubridate::now("UTC"),
-                                  description = input$AddFreezer))
+        # sampleDB::AddToTable(database = database, "location",
+        #                      list(created = lubridate::now("UTC"),
+        #                           last_updated = lubridate::now("UTC"),
+        #                           description = input$AddFreezer))
+
+        new_location <- sampledblib.r::create_location(input$AddFreezer)
 
         output$TableFreezer <- DT::renderDataTable({
           sampleDB::CheckTable(database = database, "location") %>%

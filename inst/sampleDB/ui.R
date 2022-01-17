@@ -7,8 +7,9 @@ library(markdown)
 
 
 #SET PATH TO SQLITE DATABASE
-database <- "example_19-Oct-21.sample_db.sqlite"
+# database <- "example_19-Oct-21.sample_db.sqlite"
 
+database <- "/home/mmurphy/Workspace/sampleDB-rpackage/files/sqlite_database/19-Oct-21.sample_db.sqlite"
 navbarPage("SampleDB",
 
            tabPanel("Upload New Samples",
@@ -44,7 +45,8 @@ navbarPage("SampleDB",
                       column(
                         width = 12,
                         selectizeInput("UploadStudyShortCode",
-                                       choices = c("", sampleDB::CheckTable(database = database, "study")$short_code),
+                                       # choices = c("", sampleDB::CheckTable(database = database, "study")$short_code),
+                                       choices = c("", sapply(sampledblib.r::get_studies(), function(x) x$short_code)),
                                        label = "Study Name"))),
 
                     fluidRow(
