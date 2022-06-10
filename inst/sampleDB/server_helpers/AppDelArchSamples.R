@@ -4,7 +4,7 @@ DelArchSamples <- function(session, input, database, output, inputs, outputs){
   
   # get search ui elements
   ui_elements <- GetUIDelArchElements()
-  
+
   # create a null value to store the search results
   list.search_results <- NULL
   
