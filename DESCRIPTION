@@ -1,34 +1,28 @@
 Package: sampleDB
-Title: Organization for EPPIcenter Wetlab Samples
-Version: 0.0.0.9000
-Authors@R: 
-    person(given = "Severiano",
-           family = "Villarruel",
-           role = c("aut", "cre"),
-           email = "Severiano.Villarruel@ucsf.edu",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Functions to imterface with EPPIcenter SampleDB database
-Imports:
-    dplyr,
-    shiny,
-    RSQLite,
-    lubridate,
-    magrittr,
-    emojifont,
-    fastmap,
-    shinyFeedback,
-    shinyWidgets,
-    purrr,
-    readr,
-    tidyr,
-    markdown,
-    shinyjs,
-    DT,
-    rappdirs,
-    shinybusy
+Title: A Management System for Wet Lab Samples
+Version: 1.2.0
+Authors@R: c(
+    person("Severiano", "Villarruel", , "Severiano.Villarruel@ucsf.edu", role = c("aut", "cre")),
+    person("Brian", "Palmer", , "brian.palmer@ucsf.edu", role = c("aut", "ctb"))
+  )
+Description: SampleDB is a Management System for Wet Lab Samples. It can
+    be used to track a sample’s storage address and metadata.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
+Language: es
+Roxygen: TRUE
 RoxygenNote: 7.2.1
-URL: https://eppicenter.github.io/sampleDB-rpackage/
+Imports: 
+    dplyr,
+    emojifont,
+    lubridate,
+    markdown,
+    purrr,
+    rappdirs,
+    readr,
+    RSQLite,
+    shinyFeedback,
+    shinyjs,
+    shinyWidgets,
+    tidyr,
+    tools
