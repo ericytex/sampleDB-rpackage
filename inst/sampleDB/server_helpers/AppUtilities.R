@@ -242,7 +242,7 @@ SearchFunction <- function(input, output, ui_elements){
   
   tryCatch(
     
-    # search (if a single participant is searched for)
+    # search (if a single StudySubject is searched for)
     if(input[[ui_elements$ui.input$SubjectUIDSearchType]] == "individual"){
       search.study_subject <- input[[ui_elements$ui.input$SearchBySubjectUID]]
       list.search_results <- sampleDB::SearchSamples(sample_type = search.type, sample_label = search.label, container_name = search.container, study_subject = search.study_subject,
@@ -250,7 +250,7 @@ SearchFunction <- function(input, output, ui_elements){
                                                      state = search.state, freezer = search.location, return_sample_ids = T) %>% suppressWarnings()
     }else{
       
-      # search (if a file of participants is searched for)
+      # search (if a file of StudySubjects is searched for)
       search_multiple_file <- read.csv(input[[ui_elements$ui.input$SearchBySubjectUIDFile]]$datapath)
 
       # remove empty columns
@@ -260,7 +260,7 @@ SearchFunction <- function(input, output, ui_elements){
         search_multiple_file <- search_multiple_file[!apply(search_multiple_file, 1, function(row) all(row == "")), ] 
       }
 
-      search.study_subject <- search_multiple_file$Participant
+      search.study_subject <- search_multiple_file$StudySubject
       search.study <- search_multiple_file$StudyCode
       search.specimen_type <- search_multiple_file$SpecimenType
       if (!is.null(search_multiple_file$CollectionDate)) {
@@ -306,7 +306,7 @@ CheckLogisticalColnamesOfUserProvidedMicronixFile <- function(input, output, use
     validate(need(out, paste0("Malformed Logistical Colnames in Uploaded File (Valid Traxcer Column Names: ", traxcer_position, ", Tube ID")))
   }
   else{
-    validate(need(out, "Malformed Logistical Colnames in Uploaded File (Valid Column Names: MicronixBarcode, Row, Column)"))
+    validate(need(out, "Malformed Logistical Colnames in Uploaded File (Valid Column Names: Barcode, Row, Column)"))
   }
 
   return(out)
@@ -321,7 +321,7 @@ CheckMetadataColnamesOfUserProvidedMicronixFile <- function(input, output, users
   upload_file_type <- input[[ui_elements$ui.input$MicronixFileType]]
   out <- sampleDB:::.CheckMetadataColnamesOfUserProvidedMicronixFile(users_upload_file = users_upload_file, upload_file_type = upload_file_type)
  
-  validate(need(out, "ERROR:\nMalformed Metadata Colnames (Valid Metadata Column Names: StudyCode, Participant, SpecimenType, [CollectionDate])"))
+  validate(need(out, "ERROR:\nMalformed Metadata Colnames (Valid Metadata Column Names: StudyCode, StudySubject, SpecimenType, [CollectionDate])"))
   return(out)
 }
 
@@ -334,7 +334,7 @@ CheckFormattedUploadFile <- function(output, database, formatted_upload_file, ui
   df_invalid <- formatted_upload_file[rowSums(is.na(formatted_upload_file[!colnames(formatted_upload_file) %in% c("collection_date", "comment")])) > 0, ]
 
   if (nrow(df_invalid) > 0) {
-    errmsg <- paste("Missing data for following sample barcode(s):", paste(df_invalid$MicronixBarcode, collapse = " "))
+    errmsg <- paste("Missing data for following sample barcode(s):", paste(df_invalid$Barcode, collapse = " "))
     warning(errmsg)
   }
 
@@ -376,7 +376,7 @@ CheckFormattedUploadFile <- function(output, database, formatted_upload_file, ui
     filter(is_longitudinal == 1 & is.na(collection_date))
 
   if (nrow(df_invalid) > 0) {
-    errmsg <- paste("Missing collection date for following sample barcode(s):", paste(df_invalid$MicronixBarcode, collapse = " "))
+    errmsg <- paste("Missing collection date for following sample barcode(s):", paste(df_invalid$Barcode, collapse = " "))
     warning(errmsg)
   }
 }
@@ -573,7 +573,7 @@ FormatMicronixMoveData <- function(ui_elements, micronix_move_data, input){
   else{ # na
       formatted_upload_file <- users_upload_file %>%
         setNames(.[1,]) %>% .[-1,] %>%
-        mutate(label = replace(MicronixBarcode, nchar(MicronixBarcode) != 10, NA),
+        mutate(label = replace(Barcode, nchar(Barcode) != 10, NA),
           well_position = paste0(Row, Column))
     }
   
@@ -592,7 +592,7 @@ FormatMicronixMoveData <- function(ui_elements, micronix_move_data, input){
       #removing row if micronix barcode is not string len 10
       formatted_upload_file <- users_upload_file %>%
         setNames(.[1,]) %>% .[-1,] %>%
-        mutate(label = replace(MicronixBarcode, nchar(MicronixBarcode) != 10, NA),
+        mutate(label = replace(Barcode, nchar(Barcode) != 10, NA),
                well_position = paste0(Row, Column))
     }
   
@@ -604,7 +604,7 @@ FormatMicronixMoveData <- function(ui_elements, micronix_move_data, input){
   formatted_upload_file <- users_upload_file %>% 
     rename(specimen_type = SpecimenType,
            study_short_code = StudyCode,
-           study_subject_id = Participant)
+           study_subject_id = StudySubject)
 
   if("CollectionDate" %in% names(formatted_upload_file)){
     formatted_upload_file <- formatted_upload_file %>% 

@@ -114,7 +114,7 @@ library(yaml)
   }
   else{
     users_upload_file <- users_upload_file %>% setNames(.[1,]) %>% .[-c(1),]
-    general_colnames <- c("MicronixBarcode", "Row", "Column")
+    general_colnames <- c("Barcode", "Row", "Column")
     out <- all(general_colnames %in% names(users_upload_file))
   }
   return(out)
@@ -233,7 +233,7 @@ library(yaml)
 .CheckMetadataColnamesOfUserProvidedMicronixFile <- function(users_upload_file, upload_file_type){
 
   #establish required metadata column names
-  names.base <- c("Participant", "SpecimenType", "StudyCode")
+  names.base <- c("StudySubject", "SpecimenType", "StudyCode")
 
   if(upload_file_type == "traxcer"){
     users_upload_file <- users_upload_file %>% setNames(.[2,]) %>% .[-c(1, 2),]
