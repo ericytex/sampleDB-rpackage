@@ -36,5 +36,13 @@ dbUpdateEvent <- reactivePoll(1000 * 5, NULL,
   )
 
 
+test.directory <- normalizePath(
+      file.path(dirname(Sys.getenv("SDB_PATH")), "test"))
+
+print(test.directory)
+
+if (!dir.exists(test.directory)) {
+  dir.create(test.directory)
+}
 
 

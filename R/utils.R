@@ -93,13 +93,22 @@ library(yaml)
 # Logistical Checks
 .CheckLogisticalColnamesOfUserProvidedMicronixFile <- function(upload_file_type, users_upload_file){
 
+  rdafile <- file.path(test.currdir,
+      paste0("logistical_colnames_", upload_file_type, "_",
+        gsub("[T:]", "_", lubridate::format_ISO8601(lubridate::now())), ".rda"))
+
+
   if(upload_file_type == "visionmate"){
     users_upload_file <- users_upload_file %>% setNames(.[1,]) %>% .[-c(1),]
     required_visionmate_colnames <- c("LocationRow", "LocationColumn", "TubeCode")
     visionmate_colnames_withdate <- c(required_visionmate_colnames, "CollectionDate")
     out <- all(required_visionmate_colnames %in% names(users_upload_file)) || all(visionmate_colnames_withdate %in% names(users_upload_file))
+
+    save(upload_file_type, users_upload_file, required_visionmate_colnames, visionmate_colnames_withdate, out, file = rdafile)
+
+
   }
-  else if(upload_file_type == "traxcer"){
+  else if(upload_file_type == "traxcer") {
     config <- yaml::read_yaml(Sys.getenv("SDB_CONFIG"))
     traxcer_position <- ifelse(
       is.na(config$traxcer_position$override),
@@ -111,12 +120,19 @@ library(yaml)
     required_traxcer_colnames <- c(traxcer_position, "Tube ID")
     traxcer_colnames_withdate <- c(required_traxcer_colnames, "CollectionDate")
     out <- all(required_traxcer_colnames %in% names(users_upload_file)) || all(traxcer_colnames_withdate %in% names(users_upload_file))
+
+    save(upload_file_type, traxcer_position, users_upload_file, required_traxcer_colnames, traxcer_colnames_withdate, out, file = rdafile)
+
   }
   else{
     users_upload_file <- users_upload_file %>% setNames(.[1,]) %>% .[-c(1),]
     general_colnames <- c("MicronixBarcode", "Row", "Column")
     out <- all(general_colnames %in% names(users_upload_file))
+
+    save(upload_file_type, users_upload_file, general_colnames, out, file = rdafile)
+
   }
+
   return(out)
 }
 

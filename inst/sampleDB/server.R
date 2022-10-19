@@ -20,6 +20,22 @@ function(input, output, session) {
     # for (i in system("bash /sampleDB_backup_generator.sh", intern = TRUE)) message(i)
     Backup_SampleDB(checksum = TRUE) 
 
+    test.currdir <- suppressWarnings(
+        normalizePath(
+          file.path(test.directory,
+             paste0("session_", gsub("[T:]", "_",
+                lubridate::format_ISO8601(lubridate::now()))
+             )
+          )
+        )
+      )
+
+    dir.create(test.currdir)
+
+    assign("test.currdir", test.currdir, envir=.GlobalEnv)
+
+    print(test.currdir)
+
     # Set path to .sqlite database
     database <- Sys.getenv("SDB_PATH")
     backups <- list.files(file.path(dirname(database), "backups"))
